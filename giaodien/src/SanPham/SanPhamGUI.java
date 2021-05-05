@@ -2,11 +2,14 @@ package SanPham;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImagingOpException;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -20,6 +23,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import Button.*;
+import jdk.internal.jimage.ImageLocation;
+import sun.awt.image.ImageAccessException;
 
 
 public class SanPhamGUI extends JPanel{
@@ -39,6 +44,7 @@ public class SanPhamGUI extends JPanel{
 	private SpinnerNumberModel soluong = new SpinnerNumberModel();	//cài số lượng tối đa -> get bên sản phẩm
 	
 	private SanPhamBUS sp = new SanPhamBUS();
+	JFrame f;
 	
 	public SanPhamGUI(){
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
@@ -62,7 +68,12 @@ public class SanPhamGUI extends JPanel{
 			@Override
 			public void valueChanged(ListSelectionEvent evt) {
 				// TODO Auto-generated method stub
-			Click(evt);
+			try {
+				Click(evt);
+			} catch (ImageAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			}
 		});
 		
@@ -82,6 +93,7 @@ public class SanPhamGUI extends JPanel{
 		image.setBorder(border);
 		image.setPreferredSize(new Dimension(250, 250));
 		image.add(ImageSP);
+		
 		
 		text = new JPanel();
 		text.setPreferredSize(new Dimension(500,250));
@@ -110,9 +122,18 @@ public class SanPhamGUI extends JPanel{
 		JPanel p2 = new JPanel();
 		dongia.setBorder(BorderFactory.createTitledBorder(border,"Đơn giá"));
 		hinhanh.setBorder(BorderFactory.createTitledBorder(border,"Hình ảnh"));
+		JButton Src = new ButtonImage();
+		
+		Src.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent me) {
+				Source(me);
+			}
+		});
 		
 		p2.add(dongia);
 		p2.add(hinhanh);
+		p2.add(Src);
 		
 		soluong = new SpinnerNumberModel(0, 0, 1000, 1);	//get soluong san pham
 		addModel("Số lượng",soluong,p2);
@@ -177,9 +198,13 @@ public class SanPhamGUI extends JPanel{
 		
 	}
 	//show textfield khi nhap chon model
-	private void Click(ListSelectionEvent evt) {
+	private void Click(ListSelectionEvent evt) throws ImageAccessException {
 		int i = sanphamTable.getSelectedRow();
 		if(i>=0) {
+			/*
+			ImageIcon ima =  new ImageIcon(new ImageIcon(getClass().getResource("/images/ImageSP/"+(String)model.getValueAt(i, 5))).getImage().getScaledInstance(170, 250, Image.SCALE_AREA_AVERAGING));
+			ImageSP.setIcon(ima);
+			*/
 			masp.setText((String)model.getValueAt(i, 0));
 			tensp.setText((String)model.getValueAt(i, 1));
 			loaisp.setText((String)model.getValueAt(i, 2));
@@ -188,8 +213,9 @@ public class SanPhamGUI extends JPanel{
 			
 			hinhanh.setText((String)model.getValueAt(i, 5));
 			//soluongsp = (int) model.getValueAt(i, 4);
+			}
+			
 		}
-	}
 	private void addDocumentListener(JTextField txField) {
         txField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -240,6 +266,14 @@ public class SanPhamGUI extends JPanel{
 			JOptionPane.showMessageDialog(this, "Chưa chọn sản phẩm để sửa");
 		}
 		 
+	}
+	private void Source(MouseEvent me) {
+		FileDialog fd = new FileDialog(f);
+        fd.setVisible(true);
+        String filename = fd.getFile();
+        if (filename != null) {
+            hinhanh.setText(filename);
+        }
 	}
 	private void Them(MouseEvent me) {
 		if(masp.getText().equals("") || tensp.getText().equals("") || dongia.getText().equals("") || hinhanh.getText().equals("") || loaisp.getText().equals("") ) {
