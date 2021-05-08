@@ -7,6 +7,7 @@ import javax.swing.event.ListSelectionListener;
 import CuaHang.CuaHangGUI;
 import HoaDon.HoaDonGUI;
 import KhachHang.KhachHangGUI;
+import LoaiSanPham.LoaiSanPhamGUI;
 import NhaCungCap.NhaCungCapGUI;
 import NhanVien.NhanVienGUI;
 import NhapHang.NhapHangGUI;
@@ -42,19 +43,21 @@ private JPanel cuahang;
 private JPanel nhaphang;
 private JPanel nhanvien;
 private JPanel sanpham;
+private JPanel loaisanpham;
 private JPanel nhacungcap;
 private JPanel khachhang;
 private JPanel hoadon;
 private JPanel taikhoan;
+private String TenNguoiDung = "Nhớ sửa";
 
-
+//public giaodienchinh(String TenNguoiDung) {
 public giaodienchinh() {
 	
 	//setLayout(mainLayout);
 	setSize(width,height);
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
-	top =CreateTopPanel();
+	top =CreateTopPanel(TenNguoiDung);
 	
 	left = CreateLeftPanel();
 	
@@ -82,8 +85,9 @@ public giaodienchinh() {
 	//setExtendedState(JFrame.MAXIMIZED_BOTH);
 	*/
 }
+	
 
-	public JPanel CreateTopPanel() {
+	public JPanel CreateTopPanel(String Ten) {
 		JPanel panel = new JPanel(); //panel chinh	
 		Font font = new Font(Font.SANS_SERIF, Font.BOLD, 18);
 		panel.setLayout(new BorderLayout());
@@ -93,7 +97,7 @@ public giaodienchinh() {
 		
 
 		iconOut=new ImageIcon(getClass().getResource("/images/logout.png"));
-		logout = new JLabel("Triều",iconOut,JLabel.CENTER);
+		logout = new JLabel(Ten,iconOut,JLabel.CENTER);
 		logout.setFont(font);
 		
 		//tennguoidung = new JLabel("")
@@ -157,6 +161,7 @@ public giaodienchinh() {
 		model.addElement(new LeftMenuItem("Cửa hàng","shop"));
 		model.addElement(new LeftMenuItem("Nhập hàng","checklist"));
 		model.addElement(new LeftMenuItem("Sản phẩm","watch"));
+		model.addElement(new LeftMenuItem("Loại sản phẩm","phanloai"));
 		model.addElement(new LeftMenuItem("Hóa đơn","bill"));
 		model.addElement(new LeftMenuItem("Nhân viên","employee"));
 		model.addElement(new LeftMenuItem("Khách hàng","user"));
@@ -189,53 +194,79 @@ public giaodienchinh() {
 			case "Cửa hàng":{
 				luachon.setText("CỬA HÀNG");
 				addDonHangOut(top);		//add logo gio hang
-				
+				if(cuahang == null) {
 				cuahang = new CuaHangGUI();
+				}
 				content.add(cuahang);
 				break;
 			}
 			case "Hóa đơn":{
 				luachon.setText("HÓA ĐƠN");
+				if(hoadon == null) {
 				hoadon = new HoaDonGUI();
+				}
 				content.add(hoadon);
 				break;
 			}
 			case "Sản phẩm":{
 				luachon.setText("SẢN PHẨM");
-				sanpham= new SanPhamGUI();
+				if(sanpham == null) {
+					sanpham= new SanPhamGUI();
+					
+				}
 				content.add(sanpham);
+				
+				break;
+			}
+			case "Loại sản phẩm":{
+				luachon.setText("LOẠI SẢN PHẨM");
+				if(loaisanpham == null) {
+					loaisanpham= new LoaiSanPhamGUI();
+					
+				}
+				content.add(loaisanpham);
+				
 				break;
 			}
 			case "Nhập hàng":{
 				addDonHangIn(top);		//add logo nhap hang
-				luachon.setText("NHẬP HÀNG");
 				
+				luachon.setText("NHẬP HÀNG");
+				if(nhaphang ==null) {
 				nhaphang = new NhapHangGUI();
+				}
 				content.add(nhaphang);
 				break;
 			}
 			case "Nhân viên":{
 				luachon.setText("NHÂN VIÊN");
-				
+				if(nhanvien == null) {
 				nhanvien = new NhanVienGUI();
+				}
 				content.add(nhanvien);
 				break;
 			}
 			case "Khách hàng":{
 				luachon.setText("KHÁCH HÀNG");
+				if(khachhang ==null ) {
 				khachhang = new KhachHangGUI();
+				}
 				content.add(khachhang);
 				break;
 			}
 			case "Nhà cung cấp":{
 				luachon.setText("NHÀ CUNG CẤP");
+				if(nhacungcap == null) {
 				nhacungcap = new NhaCungCapGUI();
+				}
 				content.add(nhacungcap);
 				break;
 			}
 			case "Tài khoản":{
 				luachon.setText("TÀI KHOẢN");
+				if(taikhoan ==null) {
 				taikhoan = new TaiKhoanGUI();
+				}
 				content.add(taikhoan);
 				break;
 			}

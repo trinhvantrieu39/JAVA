@@ -28,6 +28,7 @@ public class SanPhamBUS {
 		}
 		return false;
 	}
+	
 	public boolean Add(SanPham sp) {
 		boolean check = spDAO.AddDB(sp);
 		if(check) {
@@ -50,7 +51,7 @@ public class SanPhamBUS {
 			}
 		}
 		else {
-			JOptionPane.showMessageDialog(null, "Thêm không thành công!!!");
+			JOptionPane.showMessageDialog(null, "Xóa không thành công!!!");
 			return false;
 		}
 		return check;

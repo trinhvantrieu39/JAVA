@@ -28,7 +28,7 @@ public class LeftMenuItemRenderer extends JPanel implements ListCellRenderer<Lef
 	public Component getListCellRendererComponent(JList<? extends LeftMenuItem> list, LeftMenuItem LeftMenuItem, int index,
 			boolean isSelected, boolean cellHasFocus) {
 		// TODO Auto-generated method stub
-		icon.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/images/"+LeftMenuItem.getIconName() + ".png")).getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT)));
+		icon.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/images/"+LeftMenuItem.getIconName() + ".png")).getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
 //		icon.setIcon((Icon) new ImageIcon(getClass().getResource("/images/"+LeftMenuItem.getIconName() + ".png")).getImage().getScaledInstance(60, 60, Image.SCALE_DEFAULT));
 		name.setText(LeftMenuItem.getName());
 		//set Opaque

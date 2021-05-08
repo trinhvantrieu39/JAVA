@@ -6,6 +6,9 @@ import keeptoo.KGradientPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import giaodien.giaodienchinh;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,11 +22,15 @@ import java.sql.*;
 public class FormDangNhap extends JFrame implements ActionListener {
     private KGradientPanel panel;
     private JLabel lb_tk,lb_mk,lb_TIeude;
-    private JButton bt_DN,bt_DK;
+    private JButton bt_DN;
     private JTextField txt_tenDN,Checktxt_tenDN,Checktxt_password;
     private JPasswordField txt_password;
+    private String TenNguoiDung;
+    public static void main(String[] args) {
+    	new FormDangNhap();
 
-    FormDangNhap() {
+	}
+    public FormDangNhap() {
 
         panel=new KGradientPanel();
         lb_TIeude = new JLabel("Đăng Nhập");
@@ -72,14 +79,7 @@ public class FormDangNhap extends JFrame implements ActionListener {
         bt_DN.setBorder(new EmptyBorder(5, 5, 5, 5));
         panel.add(bt_DN);
 
-        bt_DK = new JButton("Đăng Ký");
-        bt_DK.setBorder(new EmptyBorder(5, 5, 5, 5));
-        bt_DK.setFont(new Font("Arial", Font.BOLD, 18));
-        bt_DK.setBounds(358, 11, 92, 23);
-        bt_DK.setForeground(Color.WHITE);
-        bt_DK.setBackground(new Color(225,40,40));
-
-        panel.add(bt_DK);
+        
 
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
         panel.setLayout(null);
@@ -88,12 +88,12 @@ public class FormDangNhap extends JFrame implements ActionListener {
         txt_tenDN.addActionListener(this);
         txt_password.addActionListener(this);
         bt_DN.addActionListener(this);
-        bt_DK.addActionListener(this);
+        
 
         setBounds(380, 100, 477, 407);
         panel.kStartColor=new Color(63,94,251);
         panel.kEndColor=new Color(252,70,107);
-        setTitle("ĐĂng nhập");
+        setTitle("Đăng nhập");
         setVisible(true);
         setResizable(false);
 
@@ -180,7 +180,8 @@ public class FormDangNhap extends JFrame implements ActionListener {
             }
 
             if (dt.checkLogin(tendangnhap,matkhau)==true){
-                JOptionPane.showMessageDialog(this,"Đăng nhập thành công");
+               // new giaodienchinh(TenNguoiDung);
+                
             }
             else {
                 JOptionPane.showMessageDialog(this,"Tên đăng nhập hoặc mật khẩu không đúng");
@@ -206,13 +207,14 @@ class database {
 
 
 
-                String sql = "SELECT TenTK,MatKhau,MaNV,MaQuyen FROM taikhoan WHERE TenTK=? and MatKhau=?";
+                String sql = "SELECT MaTK,MatKhau,MaNV,MaQuyen FROM taikhoan WHERE MaTK=? and MatKhau=? ";
                 PreparedStatement ps = kn.con.prepareStatement(sql);
                 ps.setString(1, tentaikhoan);
                 ps.setString(2, matkhau);
+                
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    // System.out.println(tentaikhoan + " " + matkhau);
+                     System.out.println(tentaikhoan + " " + matkhau);
                     return true;
 
                 } else {
@@ -227,5 +229,5 @@ class database {
         }
         return false;
     }
-
+    
 }

@@ -19,7 +19,10 @@ public class FormDangKy extends JFrame implements ActionListener {
     private JButton bt_Dangky;
     private  JComboBox comboBox;
 
-     FormDangKy(){
+    public static void main(String[] args) {
+		new FormDangKy();
+	}
+     public FormDangKy(){
 
         panel=new KGradientPanel();
         panel.setBorder(new EmptyBorder(10,10,10,10)); //EmptyBorder tạo đường viền ẩn
@@ -406,7 +409,7 @@ class connect{
     public boolean connect() {
 
         try {
-            String url="jdbc:mysql://localhost:3306/quanlicuahangdongho";
+            String url="jdbc:mysql://localhost:3306/cuahangdongho";
             String user="root";
             String pass="";
             con=DriverManager.getConnection(url,user,pass);
