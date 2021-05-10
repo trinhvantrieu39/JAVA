@@ -182,6 +182,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
         if (i == -1) {
             JOptionPane.showMessageDialog(null, "Xin vui lòng chọn dòng cần sửa!");
         } else {
+            cleanWarning();
             nv.MaNV = txtMaNV.getText();
             nv.TenNV = txtHoten.getText().replaceAll("\\s\\s+"," ").trim();
             String birth=cbngay.getSelectedItem().toString()+"-"+cbthang.getSelectedItem().toString()+"-"+cbnam.getSelectedItem().toString();
@@ -245,6 +246,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
     private void selectedRow(MouseEvent e) {
         int i = tblDSNV.getSelectedRow();
         if (i != -1) {
+            txtMaNV.setEditable(false);
             txtMaNV.setText(tblDSNV.getModel().getValueAt(i, 0).toString());
             txtHoten.setText(tblDSNV.getModel().getValueAt(i, 1).toString());
             cbngay.setSelectedIndex(Integer.parseInt(tblDSNV.getModel().getValueAt(i, 2).toString().substring(0,2)));
@@ -273,7 +275,6 @@ public class NhanVienGUI extends javax.swing.JPanel {
         pframe.setLayout(null);
         
         pframe.setSize(weight,height);
-        Icon icon=new ImageIcon("D:\\MônHọc\\JAVA\\Image\\button-add.png");
         setSize(weight, height);
         pmenu = new JPanel();
         pmenu.setLayout(null);
@@ -501,6 +502,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
                 cbngay.setSelectedIndex(0);
                 cbthang.setSelectedIndex(0);
                 cbnam.setSelectedIndex(0);
+                txtMaNV.setEditable(true);
             }
         });
         txtTim.getDocument().addDocumentListener(new DocumentListener(){

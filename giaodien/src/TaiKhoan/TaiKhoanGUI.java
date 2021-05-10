@@ -26,7 +26,7 @@ public class TaiKhoanGUI extends JPanel{
 	
 public TaiKhoanGUI(){
 	setLayout(layout);
-	
+	setBorder(border);
 	JPanel panel = CreateInfo();
 	taikhoanTable.setModel(model);
 	model.addColumn("Tên tài khoản");

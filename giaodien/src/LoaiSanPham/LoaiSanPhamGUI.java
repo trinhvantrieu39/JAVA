@@ -35,7 +35,7 @@ public class LoaiSanPhamGUI extends JPanel{
 	
 public LoaiSanPhamGUI(){
 	setLayout(layout);
-	
+	setBorder(border);
 	JPanel panel = CreateInfo();
 	lspTable.setModel(model);
 	model.addColumn("Mã hóa đơn");

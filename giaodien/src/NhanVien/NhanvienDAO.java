@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane; 
 public class NhanvienDAO {
-            String dbUrl="jdbc:mysql://localhost:3306/cuahangdongho";
+            String dbUrl="jdbc:mysql://localhost:3306/cuahangdongho?useUnicode=true&characterEncoding=UTF-8";
             String username="root"; String password="";
             Connection con=null;
             Statement stmt=null;

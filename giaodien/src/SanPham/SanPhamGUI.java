@@ -248,14 +248,18 @@ public class SanPhamGUI extends JPanel{
 				
 				//ShowSP();
 				
+				
 				model.setValueAt(MaSP,i,0);
 				model.setValueAt(TenSP, i, 1);
 				model.setValueAt(MaLoai, i, 2);
 				model.setValueAt(DonGia, i, 3);
-				model.setValueAt(HinhAnh,i,4);
-				model.setValueAt(SoLuong, i, 5);
+				
+				model.setValueAt(SoLuong, i, 4);
+				model.setValueAt(HinhAnh,i,5);
 				
 				JOptionPane.showMessageDialog(this, "Sửa thành công");
+				ImageIcon ima =  new ImageIcon(new ImageIcon(getClass().getResource("/images/ImageSP/"+(String)model.getValueAt(i, 5))).getImage().getScaledInstance(170, 250, Image.SCALE_AREA_AVERAGING));
+				ImageSP.setIcon(ima);
 			}
 		}
 		else {

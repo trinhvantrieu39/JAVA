@@ -1,5 +1,7 @@
 package HoaDon;
 import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -12,6 +14,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import Button.*;
+import CTHD.cthdGUI;
 import LoaiSanPham.LoaiSanPham;
 import NhanVien.DateLabelFormatter;
 import net.sourceforge.jdatepicker.impl.*;
@@ -33,10 +36,11 @@ public class HoaDonGUI extends JPanel{
 	private JTextField tongtien = new JTextField(15);
 	private JTextField date = new JTextField(15);
 	private HoaDonBUS hd = new HoaDonBUS();
+	private JButton see = new ButtonShow();
 	
 public HoaDonGUI(){
 	setLayout(layout);
-	
+	setBorder(border);
 	JPanel panel = CreateInfo();
 	hoadonTable.setModel(model);
 	model.addColumn("Mã hóa đơn");
@@ -70,6 +74,16 @@ private JPanel CreateInfo() {
 	addDocumentListener(timkiem);
 	
 	tim.add(timkiem);
+	see.addMouseListener(new MouseAdapter() {
+		@Override
+		public void mousePressed(MouseEvent me) {
+			 
+			xemchitiet(me);
+			
+		}
+	});
+	see.setEnabled(false);
+	tim.add(see);
 	JPanel center = new JPanel();
 	center.setLayout(new BoxLayout(center,BoxLayout.Y_AXIS));
 	tongtien.setBorder(BorderFactory.createTitledBorder(border,"Tổng tiền"));
@@ -120,10 +134,7 @@ private JPanel CreateInfo() {
 	private void Click(ListSelectionEvent evt) {
 		int i = hoadonTable.getSelectedRow();
 		if(i>=0) {
-			/*
-			ImageIcon ima =  new ImageIcon(new ImageIcon(getClass().getResource("/images/ImageSP/"+(String)model.getValueAt(i, 5))).getImage().getScaledInstance(170, 250, Image.SCALE_AREA_AVERAGING));
-			ImageSP.setIcon(ima);
-			*/
+			see.setEnabled(true);
 			mahd.setText((String)model.getValueAt(i, 0));
 			manv.setText((String)model.getValueAt(i, 1));
 			makh.setText((String)model.getValueAt(i, 2));
@@ -167,6 +178,13 @@ private JPanel CreateInfo() {
 			newModel.addRow(obj);
 			}
 		
+	}
+	private void xemchitiet(MouseEvent me) {
+		int i = hoadonTable.getSelectedRow();
+		if(i>=0) {
+			
+			new cthdGUI((String)model.getValueAt(i, 0));
+		}
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

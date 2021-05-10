@@ -39,7 +39,7 @@ public class cthd {
 		SoLuong = soLuong;
 	}
 	public float getThanhTien() {
-		return ThanhTien;
+		return DonGia * SoLuong;
 	}
 	public void setThanhTien(float thanhTien) {
 		ThanhTien = thanhTien;

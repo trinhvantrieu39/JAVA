@@ -5,12 +5,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import CuaHang.CuaHangGUI;
+import GioHang.GioHangGUI;
 import HoaDon.HoaDonGUI;
 import KhachHang.KhachHangGUI;
 import LoaiSanPham.LoaiSanPhamGUI;
 import NhaCungCap.NhaCungCapGUI;
 import NhanVien.NhanVienGUI;
 import NhapHang.NhapHangGUI;
+import SanPham.SanPham;
 import SanPham.SanPhamGUI;
 import TaiKhoan.TaiKhoanGUI;
 
@@ -19,6 +21,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.lang.StackWalker.Option;
+import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
 
@@ -49,6 +52,7 @@ private JPanel khachhang;
 private JPanel hoadon;
 private JPanel taikhoan;
 private String TenNguoiDung = "Nhớ sửa";
+
 
 //public giaodienchinh(String TenNguoiDung) {
 public giaodienchinh() {
@@ -123,31 +127,9 @@ public giaodienchinh() {
 		panel.setBorder(new EmptyBorder(10, 10, 10, 30));
 		return panel;
 	}
-	private void addDonHangOut(JPanel top) {
-		ImageIcon iconGH = new ImageIcon();
-		iconGH = new ImageIcon(getClass().getResource("/images/shopping.png"));
-		donhangOut = new JLabel("",iconGH,JLabel.CENTER);
-		donhangOut.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent me) {
-				//đơn hàng
-				JOptionPane.showMessageDialog(content, "Gio hang");
-			}
-		});
-		top.add(donhangOut,BorderLayout.EAST);
-	}
-	private void addDonHangIn(JPanel top) {
-		ImageIcon iconIn = new ImageIcon();
-		iconIn = new ImageIcon(getClass().getResource("/images/import.png"));
-		donhangIn = new JLabel ("",iconIn,JLabel.CENTER);
-		donhangIn.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent me) {
-				JOptionPane.showMessageDialog(content, "don hang in");
-			}
-		});
-		top.add(donhangIn,BorderLayout.EAST);
-	}
+	
+	
+
 	public JPanel CreateLeftPanel() {
 		
 		JPanel panel = new JPanel(new BorderLayout());
@@ -193,7 +175,7 @@ public giaodienchinh() {
 		switch(nameAction){
 			case "Cửa hàng":{
 				luachon.setText("CỬA HÀNG");
-				addDonHangOut(top);		//add logo gio hang
+				
 				if(cuahang == null) {
 				cuahang = new CuaHangGUI();
 				}
@@ -202,9 +184,9 @@ public giaodienchinh() {
 			}
 			case "Hóa đơn":{
 				luachon.setText("HÓA ĐƠN");
-				if(hoadon == null) {
+				
 				hoadon = new HoaDonGUI();
-				}
+				
 				content.add(hoadon);
 				break;
 			}
@@ -229,7 +211,7 @@ public giaodienchinh() {
 				break;
 			}
 			case "Nhập hàng":{
-				addDonHangIn(top);		//add logo nhap hang
+				
 				
 				luachon.setText("NHẬP HÀNG");
 				if(nhaphang ==null) {

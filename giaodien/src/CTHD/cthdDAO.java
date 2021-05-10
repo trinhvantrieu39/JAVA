@@ -33,16 +33,16 @@ public class cthdDAO {
 		spConnect.closeConnect();
 		return dssp;
 	}
-	public boolean AddDB(cthd ct) {
-		for(cthd sanp : readDB()) {
-			if(sanp.masp.equals(ct.masp)) {	//trùng mã sản phẩm thì cộng thêm số lượng
-				JOptionPane.showMessageDialog(null, "Mã sản phẩm đã tồn tại");
-				return false;
+	public boolean AddDB(cthd ct, String mahd) {
+		for(cthd sanp : readDB(mahd)) {
+			if(sanp.getMaSP().equals(ct.getMaSP())) {	//trùng mã sản phẩm thì cộng thêm số lượng
+				sanp.setSoLuong( sanp.getSoLuong() + ct.getSoLuong());
+				
 			}
 		}
 		spConnect = new getMySQLConnection();
 		
-		String query = 	"INSERT INTO `sanpham` (`MaSP`, `TenSP`, `MaLoai`, `DonGia`, `SoLuong`, `HinhAnh`) VALUES ('"+sp.masp+"', '"+sp.tensp+"', '"+sp.maloai+"', '"+String.valueOf(sp.dongia)+"', '"+String.valueOf(sp.soluong)+"', '"+sp.hinhanh+"');";
+		String query = "INSERT INTO `chitiethd` (`MaHD`, `MaSP`, `DonGia`, `SoLuong`, `ThanhTien`) VALUES ('"+ct.getMaHD()+"', '"+ct.getMaSP()+"', '"+ct.getDonGia()+"', '"+ct.getSoLuong()+"', '"+ct.getThanhTien()+"');";
 		boolean check = spConnect.sqlInsert(query);
 		spConnect.closeConnect();
 		return check;		

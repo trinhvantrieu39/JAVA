@@ -2,9 +2,11 @@ package HoaDon;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import LoaiSanPham.LoaiSanPham;
+import SanPham.SanPham;
 
 public class HoaDonBUS {
 	private ArrayList<HoaDon> dshd = new ArrayList<>();
@@ -31,5 +33,16 @@ public class HoaDonBUS {
 				
 		}
 		return result;
+	}
+	public boolean Add(HoaDon sp) {
+		boolean check = hdDAO.AddDB(sp);
+		if(check) {
+			dshd.add(sp);
+			return true;
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "Thêm không thành công!!!");
+			return false;
+		}
 	}
 }
