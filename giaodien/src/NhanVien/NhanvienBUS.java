@@ -5,8 +5,6 @@
  */
 package NhanVien;
 
-import NhanVien.NhanvienDAO;
-import NhanVien.NhanvienDTO;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -14,33 +12,35 @@ import java.util.ArrayList;
  *
  * @author Admin
  */
-public class NhanvienBUS {
-        public static ArrayList<NhanvienDTO> dsnv;
-        public NhanvienBUS(){}
+public class NhanVienBUS {
+        public static ArrayList<NhanVienDTO> dsnv;
+        public NhanVienBUS(){}
         public void docDSNV(){
-                NhanvienDAO data=new NhanvienDAO();
-                if(dsnv==null) dsnv=new ArrayList<NhanvienDTO>();
+                NhanVienDAO data=new NhanVienDAO();
+                if(dsnv==null) dsnv=new ArrayList<NhanVienDTO>();
                 dsnv=data.docDSNV();
             }
-    public void them(NhanvienDTO nv){
+    public void them(NhanVienDTO nv){
                 //Kiem tra du lieu hop le
                 //Kiem tra ma sinh vien duy nhat
-                NhanvienDAO data=new NhanvienDAO();
+                NhanVienDAO data=new NhanVienDAO();
                 data.them(nv);
                 dsnv.add(nv);
              }
-    public void sua(int i,NhanvienDTO nv){
-            NhanvienDAO data=new NhanvienDAO();
+    public void sua(int i,NhanVienDTO nv){
+            NhanVienDAO data=new NhanVienDAO();
             data.sua(nv);
             dsnv.set(i,nv);
     }
-    public void xoa(int i,String ma){
-        NhanvienDAO data=new NhanvienDAO();
-        data.xoa(ma);
-        dsnv.remove(i);
+    public boolean xoa(int i,String ma){
+        NhanVienDAO data=new NhanVienDAO();
+        if(data.xoa(ma)==true){
+            dsnv.remove(i);
+            return true;}
+        return false;
     }
     
-   boolean checkTimKiem(String s,NhanvienDTO nv){
+   boolean checkTimKiem(String s,NhanVienDTO nv){
         if(nv.getMaNV().toLowerCase().contains(s.toLowerCase()) ||
            nv.getTenNV().toLowerCase().contains(s.toLowerCase()) ||
            new SimpleDateFormat("d-M-yyyy").format(nv.getNgaySinh()).toLowerCase().contains(s.toLowerCase()) ||
@@ -52,8 +52,8 @@ public class NhanvienBUS {
         }
         return false;
     }
-   void duyetNV(ArrayList nvnhom,NhanvienDTO nv){
-        NhanvienDTO nv1=new NhanvienDTO();
+   void duyetNV(ArrayList nvnhom,NhanVienDTO nv){
+        NhanVienDTO nv1=new NhanVienDTO();
         nv1.setMaNV(nv.getMaNV());
         nv1.setTenNV(nv.getTenNV());
         nv1.setNgaySinh(nv.getNgaySinh());
@@ -63,13 +63,29 @@ public class NhanvienBUS {
         nvnhom.add(nv1);
     }
      public ArrayList timKiem(String s){
-        ArrayList<NhanvienDTO> nvnhom=new ArrayList<>();
-        for(NhanvienDTO nv:dsnv){
+        ArrayList<NhanVienDTO> nvnhom=new ArrayList<>();
+        for(NhanVienDTO nv:dsnv){
             if(checkTimKiem(s,nv)==true){
                 duyetNV(nvnhom,nv);
             }
         }
         return nvnhom;
+    }
+    public boolean checknamnhuan(int n){
+        if(n % 4 == 0){
+            if(n % 100 == 0){
+                if ( n % 400 == 0){
+                    return true;
+                }
+                else{
+                   return false;
+                }
+            }else{
+               return true;
+            }
+        }else {
+            return false;
+        }
     }
      
      

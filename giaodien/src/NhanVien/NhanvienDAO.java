@@ -4,20 +4,19 @@
  * and open the template in the editor.
  */
 package NhanVien;
-import NhanVien.NhanvienDTO;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane; 
-public class NhanvienDAO {
-            String dbUrl="jdbc:mysql://localhost:3306/cuahangdongho?useUnicode=true&characterEncoding=UTF-8";
+public class NhanVienDAO {
+            String dbUrl="jdbc:mysql://localhost:3306/cuahangdongho";
             String username="root"; String password="";
             Connection con=null;
             Statement stmt=null;
             ResultSet rs=null;
-            public NhanvienDAO(){
+            public NhanVienDAO(){
                 if(con==null)
                 {
                     try{
@@ -34,13 +33,13 @@ public class NhanvienDAO {
             }
             public ArrayList docDSNV()
             {   
-                ArrayList dsnv=new ArrayList<NhanvienDTO>();
+                ArrayList dsnv=new ArrayList<NhanVienDTO>();
                 try{
-                String qry="select *from nhanvien";
+                String qry="select *from NhanVien";
                 stmt=con.createStatement();
                 rs=stmt.executeQuery(qry);
                 while(rs.next()){
-                    NhanvienDTO nv=new NhanvienDTO();
+                    NhanVienDTO nv=new NhanVienDTO();
                     nv.MaNV=rs.getString(1);
                     nv.TenNV=rs.getString(2);
                     nv.NgaySinh=rs.getDate(3);
@@ -51,12 +50,12 @@ public class NhanvienDAO {
                     }
                 }
                 catch(SQLException ex){
-                    JOptionPane.showMessageDialog(null, "không tìm thấy SQL");
+                    JOptionPane.showMessageDialog(null, "không đọc được dữ liệu SQL");
                 }    
                 return dsnv;            }   
-            public void them(NhanvienDTO nv){
+            public void them(NhanVienDTO nv){
                 try{
-                    String qry="insert into nhanvien VALUES(";
+                    String qry="insert into NhanVien VALUES(";
                     qry=qry+"'"+nv.MaNV+"'";
                     qry=qry+","+"'"+nv.TenNV+"'";
                     qry=qry+","+"'"+(new SimpleDateFormat("yyyy-MM-dd").format(nv.NgaySinh))+"'";
@@ -75,19 +74,21 @@ public class NhanvienDAO {
                     JOptionPane.showMessageDialog(null,"Lỗi ghi thông tin sinh viên");
                 }
     }
-    public void xoa(String MaNV){
+    public boolean xoa(String MaNV){
         try{
-            String qry="Delete from nhanvien where MaNV='"+MaNV+"'";
+            String qry="Delete from NhanVien where MaNV='"+MaNV+"'";
             stmt=con.createStatement();
             stmt.executeUpdate(qry);
         }
         catch(SQLException ex){
             JOptionPane.showMessageDialog(null,"Lỗi xóa sinh viên!");
+            return false;
         }
+        return true;
     }
-    public void sua(NhanvienDTO nv){
+    public void sua(NhanVienDTO nv){
         try{
-            String qry="Update nhanvien Set ";
+            String qry="Update NhanVien Set ";
             qry=qry+" TenNV='"+nv.TenNV+"'";
             qry=qry+",NgaySinh='"+(new SimpleDateFormat("yyyy-MM-dd").format(nv.NgaySinh))+"'";
             qry=qry+",DiaChi='"+nv.DiaChi+"'";

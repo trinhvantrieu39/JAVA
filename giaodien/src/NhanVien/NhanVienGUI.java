@@ -1,7 +1,5 @@
 package NhanVien;
 
-import NhanVien.NhanvienDTO;
-import NhanVien.NhanvienBUS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -14,8 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import java.lang.Integer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -33,7 +30,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
     DefaultTableModel model;
     JTable tblDSNV;
     JTextField txtMaNV, txtHoten, txtDiachi, txtSDT, txtTim;
-    JLabel ltitle, lMa, lHoten, lNgaysinh, lDiachi, lSDT, lTim,lgioitinh;
+    JLabel lMa, lHoten, lNgaysinh, lDiachi, lSDT, lTim,lgioitinh;
     JLabel check1,check2,check3,check4,check5,check6;
     JButton btnthem, btnsua, btnxoa,btnreset;
     JScrollPane sptbl;
@@ -51,22 +48,28 @@ public class NhanVienGUI extends javax.swing.JPanel {
     }
     private int kiemTraHopLe(){
         int kt=0;
+        NhanVienBUS bus=new NhanVienBUS();
         if(txtMaNV.getText().isEmpty()){
             check1.setText("*Mã không được để trống!");
             kt++;
         }
-        else if(isNumeric(txtMaNV.getText())==false || txtMaNV.getText().length()!=10){
-            check1.setText("*Mã không hợp lệ!");
+        else if(isNumeric(txtMaNV.getText())==false ){
+            check1.setText("*Mã nhân viên phải là số!");
             kt++;
         }
         if(txtHoten.getText().isEmpty()){
             check2.setText("*Họ không được để trống!");
             kt++;
         }
-        else if(isAlpha(txtHoten.getText())==false || txtHoten.getText().length()>30){
+        else if(isAlpha(txtHoten.getText())==false ){
             check2.setText("*Họ chứa các kí tự không hợp lệ!");
             kt++;
         }
+        else if(txtHoten.getText().length()>30){
+            check2.setText("độ dài họ tên không được quá 30!");
+            kt++;
+        }
+            
         if(cbngay.getSelectedIndex()==0){
             if(cbthang.getSelectedIndex()==0){
                 if(cbnam.getSelectedIndex()==0){
@@ -100,7 +103,21 @@ public class NhanVienGUI extends javax.swing.JPanel {
         else if(cbnam.getSelectedIndex()==0){
             check3.setText("*Năm không được để trống!");
             kt++;
-        }
+        }else{
+        int month=Integer.parseInt(cbthang.getSelectedItem().toString());
+        int day=Integer.parseInt(cbngay.getSelectedItem().toString());
+        int year=Integer.parseInt(cbnam.getSelectedItem().toString());
+        if(month==4||month==6||month==9||month==11||month==2){
+            if(day>30){
+                check3.setText("Ngày không hợp lệ");
+                kt++;
+            }
+            if(bus.checknamnhuan(day)==false){
+                check3.setText("Ngày không hợp lệ");
+                kt++;
+            }
+        }}
+  
         if(cbgioitinh.getSelectedItem()=="Giới tính"){
             check6.setText("*Giới tính không được để trống!");
             kt++;
@@ -114,9 +131,12 @@ public class NhanVienGUI extends javax.swing.JPanel {
             check4.setText("*Số điện thoại không được để trống!");
             kt++;
         }
-        else if(isNumeric(txtSDT.getText())==false || txtSDT.getText().length()>11 || 
-                txtSDT.getText().length()<10){
+        else if(isNumeric(txtSDT.getText())==false) {
             check4.setText("*Số điện thoại không hợp lệ!");
+            kt++;
+        }
+        else if(txtSDT.getText().length()!=10){
+            check4.setText("*Số điện thoại phải đủ 10 chữ số!");
             kt++;
         }
         return kt;
@@ -142,7 +162,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
     private void btnThemActionPerformed(ActionEvent e) throws ParseException {
             cleanWarning();
             if(kiemTraHopLe()==0){
-            NhanvienDTO nv=new NhanvienDTO();    
+            	NhanVienDTO nv=new NhanVienDTO();    
             nv.MaNV = txtMaNV.getText();
             nv.TenNV = txtHoten.getText();
             String birth=cbngay.getSelectedItem().toString()+"-"+cbthang.getSelectedItem().toString()+"-"+cbnam.getSelectedItem().toString();
@@ -150,7 +170,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
             nv.DiaChi = txtDiachi.getText();
             nv.SDT = txtSDT.getText();
             nv.Gioitinh= cbgioitinh.getSelectedItem().toString();
-            NhanvienBUS bus = new NhanvienBUS();
+            NhanVienBUS bus = new NhanVienBUS();
             bus.them(nv);
             Vector row = new Vector();
             row.add(nv.MaNV);
@@ -161,9 +181,11 @@ public class NhanVienGUI extends javax.swing.JPanel {
             row.add(nv.Gioitinh);
             model.addRow(row);
             tblDSNV.setModel(model);
+            reset();
+            JOptionPane.showMessageDialog(null, "thêm thông tin nhân viên thành công");
             }
             else
-            JOptionPane.showMessageDialog(null, "thêm thất bại");
+            JOptionPane.showMessageDialog(null, "Vui lòng kiểm tra lại thông tin nhân viên");
         
     }
     private void cleanWarning(){
@@ -176,12 +198,13 @@ public class NhanVienGUI extends javax.swing.JPanel {
     }
 
     private void btnSuaActionPerformed(ActionEvent e) throws ParseException  {
-        NhanvienDTO nv = new NhanvienDTO();
-        NhanvienBUS bus = new NhanvienBUS();
+    	NhanVienDTO nv = new NhanVienDTO();
+        NhanVienBUS bus = new NhanVienBUS();
         int i = tblDSNV.getSelectedRow();
         if (i == -1) {
             JOptionPane.showMessageDialog(null, "Xin vui lòng chọn dòng cần sửa!");
         } else {
+            if(kiemTraHopLe()==0){
             cleanWarning();
             nv.MaNV = txtMaNV.getText();
             nv.TenNV = txtHoten.getText().replaceAll("\\s\\s+"," ").trim();
@@ -198,27 +221,34 @@ public class NhanVienGUI extends javax.swing.JPanel {
             model.setValueAt(nv.SDT, i, 4);
             model.setValueAt(nv.Gioitinh,i,5);
             tblDSNV.setModel(model);
+            JOptionPane.showMessageDialog(null, "Sửa thông tin thành công");
+            reset();
+            }
         }
     }
 
     private void btnXoaActionPerformed(ActionEvent e) {
-        NhanvienDTO nv = new NhanvienDTO();
-        NhanvienBUS bus = new NhanvienBUS();
+        NhanVienDTO nv = new NhanVienDTO();
+        NhanVienBUS bus = new NhanVienBUS();
         int i = tblDSNV.getSelectedRow();
         if (i == -1) {
             JOptionPane.showMessageDialog(null, "Bạn chưa chọn record cần xóa");
         } else {
             String id = tblDSNV.getModel().getValueAt(i, 0).toString();
             if (JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa dòng đã chọn có mã: " + id, "Lựa chọn", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                bus.xoa(i, id);
-                model.removeRow(i);
-                tblDSNV.setModel(model);
+                if(bus.xoa(i, id)==true){
+                    model.removeRow(i);
+                    tblDSNV.setModel(model);
+                    JOptionPane.showMessageDialog(null, "Xóa nhân viên thành công");
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Mã nhân viên đang được sử dụng nên không thể xóa."+"vui lòng kiểm tra lại");
+                }
             }
         }
     }
-
     private void timkiemTheokytu(String s) {
-        NhanvienBUS bus = new NhanvienBUS();
+    	NhanVienBUS bus = new NhanVienBUS();
         s.replaceAll("\\s\\s+", "").trim();
         removeTable();
         xuatBang(bus.timKiem(s));
@@ -228,8 +258,8 @@ public class NhanVienGUI extends javax.swing.JPanel {
             model.removeRow(i);
         }
     }
-    private void xuatBang(ArrayList<NhanvienDTO>x){
-        for(NhanvienDTO nv:x){
+    private void xuatBang(ArrayList<NhanVienDTO>x){
+        for(NhanVienDTO nv:x){
             Vector row=new Vector();
             row.add(nv.getMaNV());
             row.add(nv.getTenNV());
@@ -242,11 +272,21 @@ public class NhanVienGUI extends javax.swing.JPanel {
         }
         x.clear();
     }
+    private void reset(){
+        txtMaNV.setText(null);
+        txtHoten.setText(null);
+        txtDiachi.setText(null);
+        txtSDT.setText(null);
+        cbgioitinh.setSelectedItem("Giới tính");
+        cbngay.setSelectedIndex(0);
+        cbthang.setSelectedIndex(0);
+        cbnam.setSelectedIndex(0);
+        txtMaNV.setEditable(true);
+    }
 
     private void selectedRow(MouseEvent e) {
         int i = tblDSNV.getSelectedRow();
         if (i != -1) {
-            txtMaNV.setEditable(false);
             txtMaNV.setText(tblDSNV.getModel().getValueAt(i, 0).toString());
             txtHoten.setText(tblDSNV.getModel().getValueAt(i, 1).toString());
             cbngay.setSelectedIndex(Integer.parseInt(tblDSNV.getModel().getValueAt(i, 2).toString().substring(0,2)));
@@ -276,16 +316,9 @@ public class NhanVienGUI extends javax.swing.JPanel {
         
         pframe.setSize(weight,height);
         setSize(weight, height);
-        pmenu = new JPanel();
-        pmenu.setLayout(null);
-        pmenu.setBounds(0, 0, 1000, 40);
         
         padd=new JPanel();
         padd.setBounds(20,50,750,200);
-        
-        ltitle = new JLabel("Quản Lý Nhân Viên");
-        ltitle.setFont(new Font("Calibri", Font.BOLD, 24));
-        ltitle.setBounds(400,1, 200, 50);
         
         lMa = new JLabel("Mã Nhân Viên:");
         lMa.setFont(new Font("Calibri", Font.BOLD, 20));
@@ -315,32 +348,32 @@ public class NhanVienGUI extends javax.swing.JPanel {
         lTim.setFont(new Font("Calibri", Font.BOLD, 20));
         lTim.setBounds(30,270,150,65);
         
-        check1=new JLabel("*Mã không được để trống*");
+        check1=new JLabel();
         check1.setFont(new Font("Calibri", Font.BOLD, 15));
         check1.setForeground(Color.red);
         check1.setBounds(145,50,250,20);
         
-        check2=new JLabel("*Tên nhân viên không được để trống*");
+        check2=new JLabel();
         check2.setFont(new Font("Calibri", Font.BOLD, 15));
         check2.setForeground(Color.red);
         check2.setBounds(145,100,250,20);
         
-        check3=new JLabel("*Ngày sinh không được để trống*");
+        check3=new JLabel();
         check3.setFont(new Font("Calibri", Font.BOLD, 15));
         check3.setForeground(Color.red);
         check3.setBounds(145,160,250,20);
           
-        check4=new JLabel("*Số điện thoại không được để trống*");
+        check4=new JLabel();
         check4.setFont(new Font("Calibri", Font.BOLD, 15));
         check4.setForeground(Color.red);
         check4.setBounds(505,50,250,20);
         
-        check5=new JLabel("*Địa chỉ không được để trống*");
+        check5=new JLabel();
         check5.setFont(new Font("Calibri", Font.BOLD, 15));
         check5.setForeground(Color.red);
         check5.setBounds(505,100,250,20);
       
-        check6=new JLabel("*Giới tính không được để trống*");
+        check6=new JLabel();
         check6.setFont(new Font("Calibri", Font.BOLD, 15));
         check6.setForeground(Color.red);
         check6.setBounds(505,160,250,20);
@@ -362,15 +395,14 @@ public class NhanVienGUI extends javax.swing.JPanel {
         cbnam=new JComboBox();
         cbnam.setBounds(280,130,80,30);
         cbnam.addItem("Năm");
-        
-        for(int i=1;i<=31;i++){
-            cbngay.addItem(Integer.toString(i));
-        }
         for(int i=1;i<=12;i++){
             cbthang.addItem(Integer.toString(i));
         }
         for(int i=2021;i>=1950;i--){
             cbnam.addItem(Integer.toString(i));
+        }
+        for(int i=1;i<=31;i++){
+            cbngay.addItem(Integer.toString(i));
         }
         
         txtDiachi = new JTextField();
@@ -400,11 +432,6 @@ public class NhanVienGUI extends javax.swing.JPanel {
         btnreset = new JButton("Reset");
         btnreset.setFont(new Font("Calibri", Font.BOLD, 20));
         btnreset.setBounds(800, 200, 100, 40);
-
-        //Thêm label,textfield vào panel và frame
-        pmenu.add(ltitle);   
-        pmenu.setBackground(Color.LIGHT_GRAY);
-        padd.setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
         
         padd.add(lMa);
         padd.add(lHoten);
@@ -430,7 +457,6 @@ public class NhanVienGUI extends javax.swing.JPanel {
         padd.setLayout(new BorderLayout());
  
         pframe.add(padd);
-        pframe.add(pmenu);
         pframe.add(lTim);
         pframe.add(txtTim);
         pframe.add(btnthem);
@@ -440,7 +466,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
         
         add(pframe);
         
-        NhanvienBUS bus = new NhanvienBUS();
+        NhanVienBUS bus = new NhanVienBUS();
         tblDSNV = new JTable();
         sptbl = new JScrollPane();
         title.add("Mã Nhân Viên");
@@ -451,7 +477,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
         title.add("Giới tính");
         bus.docDSNV();
         model = new DefaultTableModel(title, 0);
-        for (NhanvienDTO nv : NhanvienBUS.dsnv) {
+        for (NhanVienDTO nv : NhanVienBUS.dsnv) {
             Vector row = new Vector();
             row.add(nv.MaNV);
             row.add(nv.TenNV);
@@ -494,15 +520,7 @@ public class NhanVienGUI extends javax.swing.JPanel {
         });
         btnreset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                txtMaNV.setText(null);
-                txtHoten.setText(null);
-                txtDiachi.setText(null);
-                txtSDT.setText(null);
-                cbgioitinh.setSelectedItem("Giới tính");
-                cbngay.setSelectedIndex(0);
-                cbthang.setSelectedIndex(0);
-                cbnam.setSelectedIndex(0);
-                txtMaNV.setEditable(true);
+                reset();
             }
         });
         txtTim.getDocument().addDocumentListener(new DocumentListener(){
@@ -526,5 +544,6 @@ public class NhanVienGUI extends javax.swing.JPanel {
                 selectedRow(e);
             }
         });
+        
     }
 }

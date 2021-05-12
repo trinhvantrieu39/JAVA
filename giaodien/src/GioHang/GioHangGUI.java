@@ -2,25 +2,28 @@ package GioHang;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-
 import Button.*;
 import CTHD.cthd;
 import CTHD.cthdBUS;
 import HoaDon.HoaDon;
 import HoaDon.HoaDonBUS;
+import KhachHang.*;
+import NhanVien.*;
 import SanPham.SanPham;
+import SanPham.SanPhamBUS;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 public class GioHangGUI extends JPanel{
 	private JTextField tfmahd = new JTextField(20);
-	private JTextField tfmanv = new JTextField(20);
-	private JTextField tfmakh = new JTextField(20);
+	//private JTextField tfmanv = new JTextField(20);
+	//private JTextField tfmakh = new JTextField(20);
+	private JComboBox cbmakh = new JComboBox(); 
+	private JComboBox cbmanv = new JComboBox();
 	private JTextField tfngaylap = new JTextField(20);
 	private JTextField tongtien = new JTextField(30); 
 	JButton sua = new ButtonChange();
@@ -32,6 +35,10 @@ public class GioHangGUI extends JPanel{
 	private JScrollPane scr = new JScrollPane();
 	HoaDonBUS hdbus = new HoaDonBUS();
 	cthdBUS ctbus ;
+	SanPhamBUS spBUS = new SanPhamBUS();
+	
+	NhanVienBUS nvBUS = new NhanVienBUS();
+	KhachHangBLL khBUS =new KhachHangBLL();
 	
 	public GioHangGUI(ArrayList<SanPham> list1) {
 		ArrayList<SanPham> list = list1;
@@ -87,8 +94,20 @@ public class GioHangGUI extends JPanel{
 		top.setLayout(new BoxLayout(top,BoxLayout.Y_AXIS));
 		Border border = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		tfmahd.setBorder(BorderFactory.createTitledBorder(border,"Mã hóa đơn"));
-		tfmanv.setBorder(BorderFactory.createTitledBorder(border,"Mã nhân viên"));
-		tfmakh.setBorder(BorderFactory.createTitledBorder(border,"Mã khách hàng"));
+		//tfmanv.setBorder(BorderFactory.createTitledBorder(border,"Mã nhân viên"));
+		//tfmakh.setBorder(BorderFactory.createTitledBorder(border,"Mã khách hàng"));
+				
+		cbmanv.setBorder(BorderFactory.createTitledBorder(border,"Mã nhân viên"));
+		nvBUS.docDSNV();		
+		for(NhanVienDTO nv : nvBUS.dsnv) {
+			cbmanv.addItem(nv.MaNV);
+		}
+		
+		cbmakh.setBorder(BorderFactory.createTitledBorder(border,"Mã khách hàng"));
+		for(KhachHangDTO kh: khBUS.getAllKhachang()) {
+			//chỉnh danh sách khách hàng
+			cbmakh.addItem(kh.getMaKH());
+		}
 		tfngaylap.setBorder(BorderFactory.createTitledBorder(border,"Ngày lập"));
 		tfngaylap.setEditable(false);
 		tfngaylap.setText(String.valueOf(java.time.LocalDate.now()));
@@ -96,9 +115,20 @@ public class GioHangGUI extends JPanel{
 		JPanel on = new JPanel();
 		JPanel below = new JPanel();
 		JPanel bot = new JPanel();
+		JLabel lb= new JLabel("");	//label dư để căn lề
+		JTextField tx = new JTextField();
+		tx.setEditable(false);
+		
+		on.setLayout(new GridLayout(0,4,1,1));
+		on.add(tx);
 		on.add(tfmahd);
-		on.add(tfmanv);
-		below.add(tfmakh);
+		on.add(cbmanv);
+		
+		
+		below.setLayout(new GridLayout(0,4));
+		below.add(lb);
+		below.add(cbmakh);
+		//below.add(tfmakh);
 		below.add(tfngaylap);
 				
 		
@@ -118,24 +148,38 @@ public class GioHangGUI extends JPanel{
 		return top;
 	}
 	private void Thanhtoan(MouseEvent me,ArrayList<SanPham> list) {
-		if(tfmahd.getText().equals("") || tfmakh.getText().equals("") || tfmanv.getText().equals("")) {
+		if(tfmahd.getText().equals("") || String.valueOf(cbmakh.getSelectedItem()).equals("") || String.valueOf(cbmanv.getSelectedItem()).equals("")) {
 			JOptionPane.showMessageDialog(null, "Chưa điền đầy đủ thông tin");
 			return;
 		}
 		else {
 			//thêm hóa đơn
 			String mahd = tfmahd.getText();
-			String manv = tfmanv.getText();
-			String makh = tfmakh.getText();
+			String manv = (String)cbmanv.getSelectedItem();
+			String makh = (String)cbmakh.getSelectedItem();
 			String ngaylap = tfngaylap.getText();
 			float tien = Float.parseFloat(tongtien.getText());
 			HoaDon hoadon = new HoaDon(mahd, manv, makh, ngaylap, tien);
 			if(hdbus.Add(hoadon)) {
 				//thêm chi tiết hóa đơn
-				for(SanPham sanpham: list) {
-					ctbus = new cthdBUS(hoadon.getMaHD());
+				for(SanPham sanpham: list) {	// danh sách sản phẩm trong giỏ hàng
+					ctbus = new cthdBUS(hoadon.getMaHD());	//chi tiết bus
+					//tạo chi tiết hd mới từ sản phẩm trong list
 					cthd ct = new cthd(mahd, sanpham.masp, sanpham.dongia, sanpham.soluong, sanpham.dongia*sanpham.soluong);
-					if(!ctbus.Add(ct, mahd)) {
+					//thêm chi tiết vào database
+					if(ctbus.Add(ct, mahd)) {
+						//sửa số lượng của sản phẩm đã bán
+						for(SanPham sanp : spBUS.getDssp()) {	//danh sách sản phẩm chính
+							if(sanp.getMasp().equals(sanpham.getMasp())) {	// nếu sản phẩm là sản phẩm đang xét
+								//update
+								if(spBUS.update(sanp.getMasp(), sanp.getTensp(), sanp.getMaloai(), sanp.getDongia(), sanp.getSoluong()-sanpham.soluong, sanp.getHinhanh())) {
+									System.out.println();
+								}
+							}
+						}
+						
+					}
+					else {
 						System.out.println("Thêm chi tiết không thành công"+ct.getMaSP());
 						return;
 					}
@@ -144,6 +188,7 @@ public class GioHangGUI extends JPanel{
 			
 			else {
 				JOptionPane.showMessageDialog(null, "Thêm hóa đơn không thành công");
+				return;
 			}
 			JOptionPane.showMessageDialog(null, "Thanh toán thành công");
 		}

@@ -1,137 +1,280 @@
 package NhaCungCap;
+import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 import Button.*;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.event.*;
-import java.awt.*;
-public class NhaCungCapGUI extends JPanel {
-    DefaultTableModel model=new DefaultTableModel();
-    JTable nhacungcapTable;
-    JScrollPane sp;
-    JTextField txtMaNCC, txtTenNCC, txtDiachiNCC,txtSdtNCC,txtTimKiem;
-    JLabel ltitle, lMaNCC, lTenNCC, lDiachiNCC, lSdtNCC,lTimKiem;
-    JButton btnThemNCC,btnSuaNCC,btnXoaNCC,btnTimNCC;
-    JPanel panelframe,panelmenu,paneladd;
-    private final int height = 760;
-    private final int weight = 1115;
+import NhanVien.DateLabelFormatter;
+import ThongTinDangNhap.ThongTin;
+import ThongTinDangNhap.ThongTinBUS;
+import net.sourceforge.jdatepicker.impl.*;
+
+public class NhaCungCapGUI extends JPanel{
+    private BoxLayout layout = new BoxLayout(this,BoxLayout.Y_AXIS);
+    private JTable nccTable = new JTable();
+    private DefaultTableModel model = new DefaultTableModel();
+    private JScrollPane sp ;
+
+    private Border border= BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+
+    private JTextField mancc = new JTextField(15);
+    private JTextField tenncc = new JTextField(15);
+    private JTextField dcncc = new JTextField(15);
+    private JTextField sdtncc=new JTextField(15);
+
+    private NhaCungCapBUS ncc = new NhaCungCapBUS();
+    private ThongTinBUS ttbus = new ThongTinBUS();
+	private String quyen;
+
     public NhaCungCapGUI(){
-        panelframe=new JPanel();
-        panelframe.setLayout(null);
-        panelframe.setBackground(new Color(240, 230, 140));
-        panelframe.setSize(weight,height);
-        setSize(weight,height);
-        setLocationRelativeTo(this);
-        panelmenu=new JPanel();
-        panelmenu.setLayout(null);
-        panelmenu.setBackground(new Color(240, 230, 140));
-        panelmenu.setBounds(0,0,1000,40);
-        paneladd=new JPanel();
-        paneladd.setBounds(20,50,900,200);
-        paneladd.setBackground(new Color(240, 230, 140));
-////        ltitle=new JLabel("Quản Lý Nhà Cung Cấp");
-////        ltitle.setFont(new Font("Calibri",1,20));
-//        ltitle.setBounds(400,1,200,50);
-        lMaNCC=new JLabel("Mã Nhà Cung Cấp :");
-        lMaNCC.setFont(new Font("Calibri",1,16));
-        lMaNCC.setBounds(60,40,150,40);
-        lMaNCC.setHorizontalAlignment(SwingConstants.RIGHT);
-        lTenNCC=new JLabel("Tên Nhà Cung Cấp :");
-        lTenNCC.setFont(new Font("Calibri",1,16));
-        lTenNCC.setBounds(57,125,150,50);
-        lTenNCC.setHorizontalAlignment(SwingConstants.RIGHT);
-        lDiachiNCC=new JLabel("Địa Chỉ :");
-        lDiachiNCC.setFont(new Font("Calibri",1,16));
-        lDiachiNCC.setBounds(563,125,150,50);
-        lSdtNCC=new JLabel("Số Điện Thoại :");
-        lSdtNCC.setFont(new Font("Calibri",1,16));
-        lSdtNCC.setBounds(470,38,150,50);
-        lSdtNCC.setHorizontalAlignment(SwingConstants.RIGHT);
+        setLayout(layout);
 
-        lTimKiem=new JLabel("Tìm Kiếm :");
-        lTimKiem.setFont(new Font("Calibri",1,16));
-        lTimKiem.setBounds(10,290,150,50);
-        lTimKiem.setHorizontalAlignment(SwingConstants.RIGHT);
-
-        txtMaNCC=new JTextField();
-        txtMaNCC.setBounds(235, 40, 220, 40);
-        txtTenNCC=new JTextField();
-        txtTenNCC.setBounds(235, 130, 220, 40);
-        txtDiachiNCC=new JTextField();
-        txtDiachiNCC.setBounds(640, 130, 220, 40);
-        txtSdtNCC=new JTextField();
-        txtSdtNCC.setBounds(640, 40, 220, 40);
-        txtSdtNCC.setBorder(null);
-        txtDiachiNCC.setBorder(null);
-        txtDiachiNCC.setBorder(null);
-        txtMaNCC.setBorder(null);
-        txtTenNCC.setBorder(null);
-
-        txtTimKiem=new JTextField();
-        txtTimKiem.setBounds(180, 290, 330, 40);
-        txtTimKiem.setBorder(null);
-        //
-        btnThemNCC=new ButtonAdd();
-        btnThemNCC.setFont(new Font("Calibri",1,16));
-        btnThemNCC.setBounds(949, 88, 120, 40);
-        //
-        btnSuaNCC=new ButtonChange();
-        btnSuaNCC.setFont(new Font("Calibri",1,16));
-        btnSuaNCC.setBounds(949, 154, 120, 40);
-        //
-        btnXoaNCC=new ButtonRemove();
-        btnXoaNCC.setFont(new Font("Calibri",1,16));
-        btnXoaNCC.setBounds(949, 214, 120, 40);
-        //
-//        btnTimNCC=new JButton("Tìm ");
-//        btnTimNCC.setFont(new Font("Calibri",1,18));
-//        btnTimNCC.setBounds(800,200,100,40);
-        //
-       panelframe.add(lTimKiem);
-       panelframe.add(txtTimKiem);
-        paneladd.add(lMaNCC);
-        paneladd.add(lTenNCC);
-        paneladd.add(lDiachiNCC);
-        paneladd.add(lSdtNCC);
-        //
-        paneladd.add(txtMaNCC);
-        paneladd.add(txtTenNCC);
-        paneladd.add(txtDiachiNCC);
-        paneladd.add(txtSdtNCC);
-        //
-        paneladd.setLayout(new BorderLayout());
-        panelframe.add(paneladd);
-        panelframe.add(panelmenu);
-        //
-        panelframe.add(btnThemNCC);
-        panelframe.add(btnSuaNCC);
-        panelframe.add(btnXoaNCC);
-//        panelframe.add(btnTimNCC);
-        //
-        this.add(panelframe);
-        //
-        nhacungcapTable=new JTable();
-        nhacungcapTable.setModel(model);
-        nhacungcapTable.setBackground(Color.WHITE);
-        sp=new JScrollPane(nhacungcapTable);
-        model.addColumn("Mã Nhà Cung Cấp");
-        model.addColumn("Tên Nhà Cung Cấp");
-        model.addColumn("Địa Chỉ");
+        JPanel panel = CreateInfo();
+        nccTable.setModel(model);
+        model.addColumn("Mã nhà cung cấp");
+        model.addColumn("Tên nhà cung cấp");
+        model.addColumn("Địa chỉ");
         model.addColumn("SĐT");
 
-        sp.setBounds(0,350,1095,400);
-        sp.setViewportView(nhacungcapTable);
-        JScrollBar scrollBar = new JScrollBar();
-        scrollBar.setBounds(1075, 352, 17, 260);
+        ShowNCC();
 
-        panelframe.add(scrollBar);
-        setLayout(null);
-        panelframe.add(sp);
+        nccTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
-        //
+            @Override
+            public void valueChanged(ListSelectionEvent evt) {
+                // TODO Auto-generated method stub
+
+                Click(evt);
+
+            }
+        });
+
+        sp = new JScrollPane(nccTable);
+        add(panel);
+        add(sp);
+    }
+    private JPanel CreateInfo() {
+    	
+    	try {
+			ThongTin thongtin = ttbus.DocFile();
+			quyen = thongtin.getQuyen();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+        JPanel panel = new JPanel();
+
+        JPanel  tim= new JPanel();
+        JTextField timkiem = new JTextField(20);
+        timkiem.setBorder(BorderFactory.createTitledBorder(border,"Tìm kiếm"));
+        addDocumentListener(timkiem);
+
+        tim.add(timkiem);
+        JPanel center = new JPanel();
+        center.setLayout(new BoxLayout(center,BoxLayout.Y_AXIS));
+
+        mancc.setBorder(BorderFactory.createTitledBorder(border,"Mã nhà cung cấp"));
+        tenncc.setBorder(BorderFactory.createTitledBorder(border,"Tên nhà cung cấp"));
+        dcncc.setBorder(BorderFactory.createTitledBorder(border,"Địa chỉ"));
+        sdtncc.setBorder(BorderFactory.createTitledBorder(border,"Số điện thoại"));
+
+
+        JPanel lef = new JPanel();
+        lef.add(mancc);
+        lef.add(tenncc);
+        lef.add(dcncc);
+        lef.add(sdtncc);
+
+
+
+        center.add(lef);
+
+        JButton them = new ButtonAdd();
+        JButton sua = new ButtonChange();
+        JButton xoa = new ButtonRemove();
+        if(quyen.equals("Q3")) {
+
+    		xoa.setEnabled(false);
+		}
+        else {
+        	xoa.addMouseListener(new MouseAdapter() {
+	            @Override
+	            public void mousePressed(MouseEvent me) {
+	
+	                Xoa(me);
+	
+	            }
+	        });
+        }
+	        them.addMouseListener(new MouseAdapter() {
+	            @Override
+	            public void mousePressed(MouseEvent me) {
+	                Them(me);
+	            }
+	        });
+	
+	       
+	        sua.addMouseListener(new MouseAdapter() {
+	            @Override
+	            public void mousePressed(MouseEvent me) {
+	
+	                Sua(me);
+	
+	            }
+	        });
+
+
+        JPanel right = new JPanel();
+        right.setLayout(new FlowLayout());
+        right.add(them);
+        right.add(sua);
+        right.add(xoa);
+        center.add(right);
+
+
+        add(center);
+        add(tim);
+        return panel;
+    }
+    private void ShowNCC() {
+
+        for(NhaCungCap ncc : ncc.getDsncc()) {
+            Object[] obj = {ncc.getMancc(),ncc.getTenncc(),ncc.getDcncc(),ncc.getSdtncc()};
+            model.addRow(obj);
+        }
 
     }
-    private void setLocationRelativeTo(NhaCungCapGUI nhaCungCapGUI) {
+    private void Click(ListSelectionEvent evt) {
+        int i = nccTable.getSelectedRow();
+        if(i>=0) {
+
+            mancc.setText((String)model.getValueAt(i, 0));
+            tenncc.setText((String)model.getValueAt(i, 1));
+            dcncc.setText((String)model.getValueAt(i, 2));
+            sdtncc.setText((String)model.getValueAt(i, 3));
+        }
+
+    }
+    private void addDocumentListener(JTextField txField) {
+        txField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                Search(txField.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                Search(txField.getText());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                Search(txField.getText());
+            }
+        });
+    }
+    private void Search(String value) {
+        ArrayList<NhaCungCap> ds = ncc.Search(value);
+        DefaultTableModel newModel = new DefaultTableModel();
+        nccTable.setModel(newModel);
+        newModel.addColumn("Mã NCC");
+        newModel.addColumn("Tên NCC");
+        newModel.addColumn("Địa chỉ NCC");
+        newModel.addColumn("SĐT");
+
+        for(NhaCungCap ncc : ds) {
+            Object[] obj = {ncc.getMancc(),ncc.getTenncc(),ncc.getDcncc(),ncc.getSdtncc()};
+            newModel.addRow(obj);
+        }
+
+    }
+    private void Them(MouseEvent me) {
+        if(mancc.getText().equals("") || tenncc.getText().equals("")||dcncc.getText().equals("")||sdtncc.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Chưa điền đủ thông tin");
+            return;
+        }
+        String MaNCC = mancc.getText();
+        String TenNCC = tenncc.getText();
+        String DiaChiNCC=dcncc.getText();
+        String SDTNCC=sdtncc.getText();
+
+        NhaCungCap nhacungcap= new NhaCungCap(MaNCC, TenNCC,DiaChiNCC,SDTNCC);
+
+
+        if(ncc.Add(nhacungcap)){
+            model.addRow(new Object[] {MaNCC, TenNCC,DiaChiNCC,SDTNCC});
+            JOptionPane.showMessageDialog(this, "Thêm thành công");
+
+        }
+    }
+    private void Sua(MouseEvent me) {
+        int i =nccTable.getSelectedRow();
+        if(i>=0) {
+            String MaNCC = mancc.getText();
+            String TenNCC = tenncc.getText();
+            String DiaChi=dcncc.getText();
+            String SDT=sdtncc.getText();
+
+            if(mancc.getText().equals("") || tenncc.getText().equals("")||dcncc.getText().equals("")||sdtncc.getText().equals("") ) {
+                JOptionPane.showMessageDialog(this, "Chưa điền đủ thông tin");
+                return;
+            }
+            if(ncc.update(MaNCC, TenNCC,DiaChi,SDT)) {
+                //todo
+
+
+                model.setValueAt(MaNCC,i,0);
+                model.setValueAt(TenNCC, i, 1);
+                model.setValueAt(DiaChi,i,2);
+                model.setValueAt(SDT,i,3);
+
+                JOptionPane.showMessageDialog(this, "Sửa thành công");
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(this, "Chưa chọn nhà cung cấp để sửa");
+        }
+
+    }
+
+    private void Xoa(MouseEvent me) {
+        int i = nccTable.getSelectedRow();
+        if(i>=0) {
+
+            if(JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn xóa?", "Chú ý",JOptionPane.YES_NO_OPTION ) == JOptionPane.YES_OPTION) {
+                String maNCC =String.valueOf(model.getValueAt(i, 0));
+                System.out.println(maNCC);
+                if(ncc.Delete(maNCC)){
+                    model.removeRow(i);
+                    JOptionPane.showMessageDialog(this, "Xóa thành công");
+                }
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(this, "Chưa chọn nhà cung cấp ");
+        }
+    }
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
+        JFrame f = new JFrame();
+        JPanel p= new NhaCungCapGUI();
+
+        f.add(p);
+        f.pack();
+        f.setVisible(true);
     }
 
 }

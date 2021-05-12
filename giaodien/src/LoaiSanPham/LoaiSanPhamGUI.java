@@ -2,6 +2,7 @@ package LoaiSanPham;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -17,6 +18,8 @@ import Button.*;
 import NhanVien.DateLabelFormatter;
 import SanPham.SanPham;
 import SanPham.SanPhamBUS;
+import ThongTinDangNhap.ThongTin;
+import ThongTinDangNhap.ThongTinBUS;
 import net.sourceforge.jdatepicker.impl.*;
 
 public class LoaiSanPhamGUI extends JPanel{
@@ -31,6 +34,8 @@ public class LoaiSanPhamGUI extends JPanel{
 	private JTextField tenlsp = new JTextField(15);
 	
 	private LoaiSanPhamBUS lsp = new LoaiSanPhamBUS();
+	private ThongTinBUS ttbus = new ThongTinBUS();
+	private String quyen;
 	
 	
 public LoaiSanPhamGUI(){
@@ -59,6 +64,20 @@ public LoaiSanPhamGUI(){
 	add(sp);
 }
 	private JPanel CreateInfo() {
+		
+		JButton them = new ButtonAdd();
+		JButton sua = new ButtonChange();
+		JButton xoa = new ButtonRemove();
+		try {
+			ThongTin thongtin = ttbus.DocFile();
+			quyen = thongtin.getQuyen();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		JPanel panel = new JPanel();
 		
 		JPanel  tim= new JPanel();
@@ -83,33 +102,40 @@ public LoaiSanPhamGUI(){
 			
 		center.add(lef);
 		
-		JButton them = new ButtonAdd();
-		them.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent me) {
-				Them(me);
-			}
-		});
-		
-		JButton sua = new ButtonChange();
-		sua.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent me) {
-				 
-				Sua(me);
+		//quyền
+				if(quyen.equals("Q3")) {
+					them.setEnabled(false);
+					sua.setEnabled(false);
+					xoa.setEnabled(false);
+				}
+				else {
+				them.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent me) {
+						Them(me);
+					}
+				});
 				
-			}
-		});
-		
-		JButton xoa = new ButtonRemove();
-		xoa.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent me) {
-				 
-				Xoa(me);
 				
-			}
-		});
+				sua.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent me) {
+						 
+						Sua(me);
+						
+					}
+				});
+				
+				
+				xoa.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mousePressed(MouseEvent me) {
+						 
+						Xoa(me);
+						
+					}
+				});
+				}
 		
 		
 		JPanel right = new JPanel();

@@ -106,12 +106,12 @@ public class CuaHangGUI extends JPanel{
 		
 		hinhanh.setBorder(BorderFactory.createTitledBorder(border,"Hình ảnh"));
 		hinhanh.setEditable(false);
-		JButton Sourc = new ButtonImage();
+		
 		p2.add(dongia);
 		p2.add(hinhanh);
-		p2.add(Sourc);
 		
-		soluong = new SpinnerNumberModel(0, 0, 10, 1);	//get soluong san pham
+		
+		soluong = new SpinnerNumberModel(0,0,0,1);	//get soluong san pham
 		addModel("Số lượng",soluong,p2);
 		
 		JButton them =new ButtonAdd();
@@ -179,7 +179,10 @@ public class CuaHangGUI extends JPanel{
 			tensp.setText((String)model.getValueAt(i, 1));
 			loaisp.setText((String)model.getValueAt(i, 2));
 			dongia.setText(String.valueOf(model.getValueAt(i, 3)));
-			soluong.setValue(model.getValueAt(i, 4));
+			//soluong.setValue(model.getValueAt(i, 4));
+			int sl =(int) model.getValueAt(i, 4);	// số lượng sản phẩm hiện có
+			//soluong = new SpinnerNumberModel(0, 0, sl, 1);
+			soluong.setMaximum(sl);
 			
 			hinhanh.setText((String)model.getValueAt(i, 5));
 			
@@ -193,12 +196,16 @@ public class CuaHangGUI extends JPanel{
 			String masp = (String)model.getValueAt(i, 0);
 			String tensp = (String)model.getValueAt(i, 1);
 			String maloai = (String)model.getValueAt(i, 2);
-			int soluong	= (int) model.getValueAt(i, 4);
+			int sluong	= (int)soluong.getValue();
 			float dongia = (float)model.getValueAt(i, 3);
 			String hinhanh = (String)model.getValueAt(i, 5);
+			if(sluong == 0) {
+				JOptionPane.showInternalMessageDialog(null, "Xin chọn số lượng");
+				return;
+			}
 			for(SanPham sp : dssp) {
 				if(sp.getMasp().equals(masp)) {
-					sp.setSoluong(sp.getSoluong() + soluong);
+					sp.setSoluong(sp.getSoluong() + sluong);
 					//hiện cửa sổ giỏ hàng
 					panelgiohang = new GioHangGUI(dssp);					
 					fgiohang.setVisible(false);					
@@ -208,7 +215,7 @@ public class CuaHangGUI extends JPanel{
 					return;
 				}
 			}
-			SanPham sanpham= new SanPham(masp,tensp,maloai,soluong,dongia,hinhanh);
+			SanPham sanpham= new SanPham(masp,tensp,maloai,sluong,dongia,hinhanh);
 			
 			dssp.add(sanpham);
 			//hiện cửa sổ giỏ hàng

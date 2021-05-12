@@ -2,19 +2,29 @@ package NhapHang;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import Button.ButtonAdd;
+import Button.ButtonGioHang;
+import GioHangNhap.GioHangNhapGUI;
+import SanPham.SanPham;
+import SanPham.SanPhamBUS;
 
 public class NhapHangGUI extends JPanel{
-	private JTable nhaphangTable = new JTable();
+	private JTable cuahangTable = new JTable();
 	private DefaultTableModel model = new DefaultTableModel();
-	private JScrollPane sp ;
+	private JScrollPane scr ;
 	private JPanel text;
 	private JPanel image;
 	private JLabel ImageSP = new JLabel();
@@ -23,22 +33,39 @@ public class NhapHangGUI extends JPanel{
 	private JTextField loaisp = new JTextField(20);
 	private JTextField dongia = new JTextField(20);
 	private JTextField timkiem = new JTextField(66);
+	private JTextField hinhanh = new JTextField(20);
 	private SpinnerNumberModel soluong = new SpinnerNumberModel();	//cài số lượng tối đa -> get bên sản phẩm
 	//private int soluongsp;
-	
+	private SanPhamBUS sp = new SanPhamBUS();
+	private ArrayList<SanPham> dssp = new ArrayList<>();
+	private JPanel panelgiohang = new GioHangNhapGUI(dssp);
+	private JFrame fgiohang = new JFrame();
 	
 	public NhapHangGUI(){
+		
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		JPanel info = CreateInput();
 		add(info);
-		nhaphangTable.setModel(model);
+		cuahangTable.setModel(model);
 		model.addColumn("Mã SP");
 		model.addColumn("Tên SP");
 		model.addColumn("Loại SP");
 		model.addColumn("Đơn Giá");
-		
-		sp = new JScrollPane(nhaphangTable);
-		add(sp);
+		model.addColumn("Số lượng");
+		model.addColumn("Hình ảnh");
+		ShowSP();	
+		cuahangTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent evt) {
+				// TODO Auto-generated method stub
+			
+				Click(evt);
+			
+			}
+		});
+		scr = new JScrollPane(cuahangTable);
+		add(scr);
 	}
 	private JPanel CreateInput(){
 		JPanel panel = new JPanel();
@@ -75,14 +102,42 @@ public class NhapHangGUI extends JPanel{
 		JPanel p2 = new JPanel();
 		dongia.setBorder(BorderFactory.createTitledBorder(border,"Đơn giá"));
 		dongia.setEditable(false);
-		p2.add(dongia);
 		
-		soluong = new SpinnerNumberModel(0, 0, 10, 1);	//get soluong san pham
+		
+		hinhanh.setBorder(BorderFactory.createTitledBorder(border,"Hình ảnh"));
+		hinhanh.setEditable(false);
+		
+		p2.add(dongia);
+		p2.add(hinhanh);
+		
+		
+		soluong = new SpinnerNumberModel(0,0,0,1);	//get soluong san pham
 		addModel("Số lượng",soluong,p2);
 		
 		JButton them =new ButtonAdd();
+		them.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent me) {
+				 
+				them(me);
+				
+			}
+		});
+
+		//gio hang
+		JButton giohang = new ButtonGioHang();
+		giohang.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent me) {
+				showgiohang(panelgiohang);
+				
+				
+			}
+		});
+		
 		JPanel p3 = new JPanel();
 		p3.add(them);
+		p3.add(giohang);
 		
 		text.add(p0);
 		text.add(p1);
@@ -103,6 +158,86 @@ public class NhapHangGUI extends JPanel{
 		spinner.setPreferredSize(new Dimension(80,30));
 		
 		ptext.add(spinner);
+	}
+	
+	private void ShowSP() {
+		
+		for(SanPham sph : sp.getDssp()) {
+		Object[] obj = {sph.masp,sph.tensp,sph.maloai, sph.dongia,sph.soluong, sph.hinhanh};
+		model.addRow(obj);
+		}
+		
+	}
+	
+	private void Click(ListSelectionEvent evt) {
+		int i = cuahangTable.getSelectedRow();
+		if(i>=0) {
+			
+			ImageIcon ima =  new ImageIcon(new ImageIcon(getClass().getResource("/images/ImageSP/"+(String)model.getValueAt(i, 5))).getImage().getScaledInstance(170, 250, Image.SCALE_AREA_AVERAGING));
+			ImageSP.setIcon(ima);
+			
+			masp.setText((String)model.getValueAt(i, 0));
+			tensp.setText((String)model.getValueAt(i, 1));
+			loaisp.setText((String)model.getValueAt(i, 2));
+			dongia.setText(String.valueOf(model.getValueAt(i, 3)));
+			//soluong.setValue(model.getValueAt(i, 4));
+			int sl =(int) model.getValueAt(i, 4);	// số lượng sản phẩm hiện có
+			//soluong = new SpinnerNumberModel(0, 0, sl, 1);
+			soluong.setMaximum(sl);
+			
+			hinhanh.setText((String)model.getValueAt(i, 5));
+			
+			//soluongsp = (int) model.getValueAt(i, 4);
+			}
+			
+		}
+	private void them(MouseEvent me) {
+		int i = cuahangTable.getSelectedRow();
+		if(i>=0) {
+			String masp = (String)model.getValueAt(i, 0);
+			String tensp = (String)model.getValueAt(i, 1);
+			String maloai = (String)model.getValueAt(i, 2);
+			int sluong	= (int)soluong.getValue();
+			float dongia = (float)model.getValueAt(i, 3);
+			String hinhanh = (String)model.getValueAt(i, 5);
+			if(sluong == 0) {
+				JOptionPane.showInternalMessageDialog(null, "Xin chọn số lượng");
+				return;
+			}
+			for(SanPham sp : dssp) {
+				if(sp.getMasp().equals(masp)) {
+					sp.setSoluong(sp.getSoluong() + sluong);
+					//hiện cửa sổ giỏ hàng
+					panelgiohang = new GioHangNhapGUI(dssp);					
+					fgiohang.setVisible(false);					
+					showgiohang(panelgiohang);
+					//
+					
+					return;
+				}
+			}
+			SanPham sanpham= new SanPham(masp,tensp,maloai,sluong,dongia,hinhanh);
+			
+			dssp.add(sanpham);
+			//hiện cửa sổ giỏ hàng
+			panelgiohang = new GioHangNhapGUI(dssp);					
+			fgiohang.setVisible(false);					
+			showgiohang(panelgiohang);
+			//
+			
+		}
+	}
+	private void showgiohang(JPanel panelgiohang) {
+		fgiohang = new JFrame();
+		//set vị trí giữa màn hình
+		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+	    int x = (int) ((dimension.getWidth() ) / 4);
+	    int y = (int) ((dimension.getHeight() )/14);
+	    fgiohang.setLocation(x, y);
+	    //
+		fgiohang.setSize(700,400);
+		fgiohang.add(panelgiohang);
+		fgiohang.setVisible(true);
 	}
 	public static void main(String[] args) {
 		JFrame f = new JFrame();

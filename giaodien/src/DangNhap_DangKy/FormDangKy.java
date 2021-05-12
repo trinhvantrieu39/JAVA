@@ -1,14 +1,16 @@
 package DangNhap_DangKy;
 
 import keeptoo.KGradientPanel;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.*;
 import java.awt.*;
 import java.sql.*;
 import javax.swing.Timer;
+
+import java.util.ArrayList;
 import java.util.regex.*;
+import PhanQuyen.*;
 
 
 public class FormDangKy extends JFrame implements ActionListener {
@@ -18,7 +20,8 @@ public class FormDangKy extends JFrame implements ActionListener {
     private JPasswordField txt_Password,txt_RePassword;
     private JButton bt_Dangky;
     private  JComboBox comboBox;
-
+    PhanQuyenBUS pqbus = new PhanQuyenBUS();
+    ArrayList<PhanQuyen> dsq = pqbus.getdsq();
     public static void main(String[] args) {
 		new FormDangKy();
 	}
@@ -41,7 +44,7 @@ public class FormDangKy extends JFrame implements ActionListener {
         lb_Tentaikhoan=new JLabel("Tên tài khoản :");
         lb_Tentaikhoan.setBounds(39, 117, 113, 23);
         lb_Tentaikhoan.setHorizontalAlignment(SwingConstants.RIGHT);
-        lb_Tentaikhoan.setFont(new Font("Arial",Font.BOLD,15));
+        lb_Tentaikhoan.setFont(new Font("Arial",Font.BOLD,16));
         lb_Tentaikhoan.setForeground(Color.WHITE);
         lb_Tentaikhoan.setBounds(45,117,113,23);
 
@@ -51,7 +54,7 @@ public class FormDangKy extends JFrame implements ActionListener {
         lb_Matkhau=new JLabel("Mật khẩu :");
         lb_Matkhau.setBounds(39, 177, 113, 14);
         lb_Matkhau.setHorizontalAlignment(SwingConstants.RIGHT);
-        lb_Matkhau.setFont(new Font("Arial",Font.BOLD,15));
+        lb_Matkhau.setFont(new Font("Arial",Font.BOLD,16));
         lb_Matkhau.setForeground(Color.WHITE);
         panel.add(lb_Matkhau);
 
@@ -59,7 +62,7 @@ public class FormDangKy extends JFrame implements ActionListener {
         lb_Nhaplaimk=new JLabel("Re-mật khẩu :");
         lb_Nhaplaimk.setBounds(10, 227, 142, 23);
         lb_Nhaplaimk.setHorizontalAlignment(SwingConstants.RIGHT);
-        lb_Nhaplaimk.setFont(new Font("Arial",Font.BOLD,15));
+        lb_Nhaplaimk.setFont(new Font("Arial",Font.BOLD,16));
         lb_Nhaplaimk.setForeground(Color.WHITE);
         panel.add(lb_Nhaplaimk);
 
@@ -67,12 +70,15 @@ public class FormDangKy extends JFrame implements ActionListener {
         lb_MaNV=new JLabel("Mã nhân viên :");
         lb_MaNV.setBounds(10, 293, 142, 14);
         lb_MaNV.setHorizontalAlignment(SwingConstants.RIGHT);
-        lb_MaNV.setFont(new Font("Arial",Font.BOLD,15));
+        lb_MaNV.setFont(new Font("Arial",Font.BOLD,16));
         lb_MaNV.setForeground(Color.WHITE);
         panel.add(lb_MaNV);
 
-        String[] Cb={"Chọn","QL","NV"};
-        comboBox=new JComboBox(Cb);
+        
+        comboBox=new JComboBox();
+        for(PhanQuyen quyen : dsq) {
+        	comboBox.addItem(quyen.getTenquyen());
+        }
         comboBox.setFont(new Font("Arial",Font.BOLD,15));
         comboBox.setBounds(190, 339, 131, 22);
 
@@ -82,7 +88,7 @@ public class FormDangKy extends JFrame implements ActionListener {
         lb_MaQuyen=new JLabel("Mã Quyền:");
         lb_MaQuyen.setBounds(21, 343, 131, 18);
         lb_MaQuyen.setHorizontalAlignment(SwingConstants.RIGHT);
-        lb_MaQuyen.setFont(new Font("Arial",Font.BOLD,15));
+        lb_MaQuyen.setFont(new Font("Arial",Font.BOLD,16));
         lb_MaQuyen.setForeground(Color.WHITE);
         panel.add(lb_MaQuyen);
 
@@ -146,7 +152,7 @@ public class FormDangKy extends JFrame implements ActionListener {
             System.out.println(e);
         }
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+       
     }
 
 
@@ -166,7 +172,22 @@ public class FormDangKy extends JFrame implements ActionListener {
         String manv=txt_MaNV.getText();
 
 
-        String MaQuyen=comboBox.getSelectedItem().toString();
+        String MaQuyen="";
+        switch(comboBox.getSelectedItem().toString()) {
+        case"Nhân viên":{
+        	MaQuyen = "Q3";
+        	break;
+        }
+        case "Admin":{
+        	MaQuyen = "Q1";
+        	break;
+        }
+        case "Quản lý":{
+        	MaQuyen = "Q2";
+        	break;
+        }
+        	
+        }
 
         if (e.getSource()==bt_Dangky) {
 
@@ -358,8 +379,8 @@ public class FormDangKy extends JFrame implements ActionListener {
 
             }
             else {
-                if(xl.checkMaNV(manv)==false){
-                    JOptionPane.showMessageDialog(null," Mã nhân viên đã tồn tại! \nVui lòng sử dụng mã khác!");
+                if(xl.checkMaNV(manv)==true){
+                    JOptionPane.showMessageDialog(null," Mã nhân viên không tồn tại! \nVui lòng nhập lại mã!");
                     return;
                 }
             }
@@ -440,7 +461,7 @@ class Xu_lyDatabase{
         try {
             if (kn.connect() == true) {
 
-                String sql1 = "INSERT INTO  `taikhoan` (`TenTK`,`MatKhau`,`MaNV`,`MaQuyen`) VALUES (?,?,?,?)";
+                String sql1 = "INSERT INTO  `taikhoan` (`MaTK`,`MatKhau`,`MaNV`,`MaQuyen`) VALUES (?,?,?,?)";
 
 
                 PreparedStatement pst=kn.con.prepareStatement(sql1);
@@ -468,14 +489,14 @@ class Xu_lyDatabase{
     public boolean checkTenTaiKhoan(String Tentaikhoan){
         try{
             if (kn.connect()){
-                String sql="SELECT TenTK,MaNV FROM taikhoan WHERE TenTK='"+Tentaikhoan+"'";
+                String sql="SELECT MaTK,MaNV FROM taikhoan WHERE MaTK='"+Tentaikhoan+"'";
                 Statement st=kn.con.createStatement();
 
 
                 ResultSet rs= st.executeQuery(sql);
 
                 while(rs.next()){
-                    String ten_tk=rs.getString("TenTK");
+                    String ten_tk=rs.getString("MaTK");
 
                     if (ten_tk.equals(Tentaikhoan)){
 

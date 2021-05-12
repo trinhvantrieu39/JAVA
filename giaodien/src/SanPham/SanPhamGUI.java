@@ -6,7 +6,7 @@ import java.awt.FileDialog;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -20,6 +20,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import Button.*;
+import ThongTinDangNhap.ThongTin;
+import ThongTinDangNhap.ThongTinBUS;
 
 
 
@@ -36,13 +38,27 @@ public class SanPhamGUI extends JPanel{
 	private JTextField dongia = new JTextField(20);
 	private JTextField hinhanh = new JTextField(20);
 	private JTextField timkiem = new JTextField(66);
-	
+	private JButton them = new ButtonAdd();
+	private JButton sua = new ButtonChange();
+	private JButton xoa = new ButtonRemove();
 	private SpinnerNumberModel soluong = new SpinnerNumberModel();	//cài số lượng tối đa -> get bên sản phẩm
 	
 	private SanPhamBUS sp = new SanPhamBUS();
+	private ThongTinBUS ttbus = new ThongTinBUS();
+	private String quyen;
 	JFrame f;
 	
 	public SanPhamGUI(){
+		try {
+			ThongTin thongtin = ttbus.DocFile();
+			quyen = thongtin.getQuyen();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//set quyền dòng 152
 		
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		JPanel info = CreateInput();
@@ -133,32 +149,40 @@ public class SanPhamGUI extends JPanel{
 		soluong = new SpinnerNumberModel(0, 0, 1000, 1);	//get soluong san pham
 		addModel("Số lượng",soluong,p2);
 		
-		JButton them =new ButtonAdd();
-		them.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent me) {
-				Them(me);
-			}
-		});
-		JButton sua = new ButtonChange();
-		sua.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent me) {
-				 
-				Sua(me);
-				
-			}
-		});
-		JButton xoa = new ButtonRemove();
-		xoa.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent me) {
-				 
-				Xoa(me);
-				
-			}
-		});
+		//quyền
+		if(quyen.equals("Q3")) {
+			them.setEnabled(false);
+			sua.setEnabled(false);
+			xoa.setEnabled(false);
+		}
+		else {
 		
+			them.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent me) {
+					Them(me);
+				}
+			});
+			
+			sua.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent me) {
+					 
+					Sua(me);
+					
+				}
+			});
+			
+			xoa.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(MouseEvent me) {
+					 
+					Xoa(me);
+					
+				}
+			});
+		}
+				
 		JPanel p3 = new JPanel();
 		p3.add(them);
 		p3.add(sua);

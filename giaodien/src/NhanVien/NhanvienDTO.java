@@ -7,7 +7,7 @@ package NhanVien;
 
 import java.util.Date;
 
-public class NhanvienDTO {
+public class NhanVienDTO {
     public String MaNV;
     public String TenNV;
     public Date NgaySinh;
@@ -15,10 +15,10 @@ public class NhanvienDTO {
     public String SDT;
     public String Gioitinh;
 
-    public NhanvienDTO() {
+    public NhanVienDTO() {
     }
 
-    public NhanvienDTO(String MaNV, String TenNV, Date NgaySinh, String DiaChi, String SDT,String Gioitinh) {
+    public NhanVienDTO(String MaNV, String TenNV, Date NgaySinh, String DiaChi, String SDT,String Gioitinh) {
         this.MaNV = MaNV;
         this.TenNV = TenNV;
         this.NgaySinh = NgaySinh;
