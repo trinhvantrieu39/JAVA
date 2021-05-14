@@ -103,7 +103,7 @@ public class FormDangNhap extends JFrame implements ActionListener {
         setTitle("Đăng nhập");
         setVisible(true);
         setResizable(false);
-
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     @Override

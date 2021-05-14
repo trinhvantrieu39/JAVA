@@ -13,8 +13,10 @@ import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 public class GioHangGUI extends JPanel{
 	private JTextField tfmahd = new JTextField(20);
+	private String MaHD = "^HD[1-9]{1,}";
 	//private JTextField tfmanv = new JTextField(20);
 	//private JTextField tfmakh = new JTextField(20);
 	private JComboBox cbmakh = new JComboBox(); 
@@ -150,6 +152,10 @@ public class GioHangGUI extends JPanel{
 		else {
 			//thêm hóa đơn
 			String mahd = tfmahd.getText();
+			if(!MaHD(mahd)) {
+				JOptionPane.showMessageDialog(null, "Mã hóa đơn phải là <HD*>");
+				return;
+			}
 			String manv = (String)cbmanv.getSelectedItem();
 			String makh = (String)cbmakh.getSelectedItem();
 			String ngaylap = tfngaylap.getText();
@@ -211,7 +217,9 @@ public class GioHangGUI extends JPanel{
 			model.addRow(obj);
 		}
 	}
-
+	public boolean MaHD(String s) {
+		return Pattern.matches(MaHD, s);
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

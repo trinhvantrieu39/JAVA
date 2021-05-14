@@ -110,11 +110,11 @@ public class NhanVienGUI extends javax.swing.JPanel {
         int day=Integer.parseInt(cbngay.getSelectedItem().toString());
         int year=Integer.parseInt(cbnam.getSelectedItem().toString());
         if(month==4||month==6||month==9||month==11||month==2){
-            if(day>30){
+            if(day>29){
                 check3.setText("Ngày không hợp lệ");
                 kt++;
             }
-            if(bus.checknamnhuan(year)==false){
+            if(bus.checknamnhuan(year)==false &&day==29){
                 check3.setText("Ngày không hợp lệ");
                 kt++;
             }

@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -29,6 +30,7 @@ import DTO.*;
 
 public class GioHangNhapGUI extends JPanel{
 	private JTextField tfmapn = new JTextField(20);
+	private String MaPN = "^PN[1-9]{1,}";
 	//private JTextField tfmanv = new JTextField(20);
 	//private JTextField tfmakh = new JTextField(20);
 	private JComboBox cbmancc = new JComboBox(); 
@@ -164,6 +166,10 @@ public class GioHangNhapGUI extends JPanel{
 		else {
 			//thêm hóa đơn
 			String mapn = tfmapn.getText();
+			if(!MaPN(mapn)) {
+				JOptionPane.showMessageDialog(null, "Mã phiếu nhập phải là <PN*>");
+				return;
+			}
 			String manv = (String)cbmanv.getSelectedItem();
 			String mancc = (String)cbmancc.getSelectedItem();
 			String ngaylap = tfngaylap.getText();
@@ -226,6 +232,9 @@ public class GioHangNhapGUI extends JPanel{
 		}
 	}
 
+	public boolean MaPN(String s) {
+		return Pattern.matches(MaPN, s);
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

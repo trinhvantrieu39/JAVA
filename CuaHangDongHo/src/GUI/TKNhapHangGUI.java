@@ -1,6 +1,7 @@
 package GUI;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -25,7 +26,7 @@ public class TKNhapHangGUI extends JPanel{
 	
 	private DefaultTableModel model = new DefaultTableModel();
 	private JScrollPane scr = new JScrollPane();
-	private JTextField timkiem = new JTextField(20);
+	//private JTextField timkiem = new JTextField(20);
 	private float tongtien;
 	SanPhamBUS spBUS =new SanPhamBUS();
 	ctpnBUS ctBUS = new ctpnBUS();
@@ -36,9 +37,11 @@ public class TKNhapHangGUI extends JPanel{
 		JPanel top = new JPanel();
 		
 		
-		
+		/*
 		timkiem.setBorder(BorderFactory.createTitledBorder(border,"Tìm kiếm"));
 		top.add(timkiem);
+		top.setBorder(new EmptyBorder(20,0,0,0));
+		*/
 		banhangTable.setModel(model);
 		model.addColumn("Mã SP");
 		model.addColumn("Tên SP");
@@ -86,16 +89,12 @@ public class TKNhapHangGUI extends JPanel{
 		model.addRow(obj2);
 		try {
 			GhiFile();
-			System.out.println(DocFileNhapHang());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	public float getTongtien() {
-		return tongtien;
-	}
+
 	private void GhiFile() throws IOException{
 		File FILE = new File("nhaphang.txt");
 		FILE.delete();
@@ -113,26 +112,7 @@ public class TKNhapHangGUI extends JPanel{
 		}
 		
 	}
-	private float DocFileNhapHang() throws IOException {
-		FileInputStream file = null;
-		DataInputStream data = null;
-		float tien=0;
-		try {
-			file = new FileInputStream("nhaphang.txt");
-			data = new DataInputStream(file);
-			
-			tien= data.readFloat();
-			
-			
-			file.close();
-			data.close();
-		//	for( int i=0;i<SoLuongSP;i++)
-		//		sp[i].XuatSP();
-		}
-		catch (EOFException e) {
-		}
-		return tien;
-	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		JFrame f= new JFrame();

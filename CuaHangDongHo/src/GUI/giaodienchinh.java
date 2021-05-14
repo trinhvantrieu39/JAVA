@@ -60,6 +60,7 @@ private JPanel hoadon;
 private JPanel phieunhap;
 private JPanel taikhoan;
 private JPanel phanquyen;
+private JPanel thongke;
 
 private String TenNguoiDung ;
 private String tentk;
@@ -102,6 +103,7 @@ public giaodienchinh() {
 	setResizable(false);
 	add(container);
 	setVisible(true);
+	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
 	/*
 	//thiet lap giua man hin
@@ -314,7 +316,8 @@ public giaodienchinh() {
 			case "Thống kê":{
 				luachon.setText("THỐNG KÊ");
 				if(quyennguoidung.equals("Q2") || quyennguoidung.equals("Q1")) {
-					
+					thongke = new ThongKeGUI();
+					content.add(thongke);
 					
 					break;
 				}

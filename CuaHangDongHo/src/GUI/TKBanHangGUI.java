@@ -1,7 +1,10 @@
 package GUI;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.SanPhamBUS;
@@ -25,20 +28,24 @@ public class TKBanHangGUI extends JPanel{
 	private JTable tongTable = new JTable();
 	private DefaultTableModel model = new DefaultTableModel();
 	private JScrollPane scr = new JScrollPane();
-	private JTextField timkiem = new JTextField(20);
+	//private JTextField timkiem = new JTextField(20);
 	private float tongtien;
 	SanPhamBUS spBUS =new SanPhamBUS();
 	cthdBUS ctBUS = new cthdBUS();
 	public TKBanHangGUI() {
+		 
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 		Border border = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
 		
 		JPanel top = new JPanel();
 		JPanel mid =new JPanel();	// chứa bảng thống kê
 		
-		
+		/*
 		timkiem.setBorder(BorderFactory.createTitledBorder(border,"Tìm kiếm"));
 		top.add(timkiem);
+		addDocumentListener(timkiem);
+		top.setBorder(new EmptyBorder(20,0,0,0));
+		*/
 		banhangTable.setModel(model);
 		model.addColumn("Mã SP");
 		model.addColumn("Tên SP");
@@ -81,6 +88,7 @@ public class TKBanHangGUI extends JPanel{
 		Object[] obj1 = {};
 		model.addRow(obj1);
 		Object[] obj2 = {"","","TỔNG:",soluong,"",tongtien};
+		
 		model.addRow(obj2);
 		try {
 			GhiFile();
@@ -108,6 +116,7 @@ public class TKBanHangGUI extends JPanel{
 		
 	}
 	
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		JFrame f= new JFrame();
