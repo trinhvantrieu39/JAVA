@@ -78,6 +78,9 @@ public giaodienchinh() {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	
+	
+	
 	tentk= tt.getMatk();
 	quyennguoidung = tt.getQuyen();
 	//setLayout(mainLayout);
@@ -90,8 +93,10 @@ public giaodienchinh() {
 	
 	content = new JPanel();
 	content.setLayout(new BorderLayout());
+	ImageIcon ima = new ImageIcon(new ImageIcon(getClass().getResource("/images/hello.png")).getImage().getScaledInstance(1000, 600, Image.SCALE_AREA_AVERAGING));
+	JLabel imag = new JLabel(ima);
 	
-	
+	content.add(imag);
 	
 	JPanel container = new JPanel();
 	container.setLayout(mainLayout);
